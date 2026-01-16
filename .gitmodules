@@ -1,6 +1,6 @@
 [submodule "frontend"]
 	path = frontend
-	url = https://github.com/takuya-ya/shifty-front.git
+	url = https://github.com/takuya-ya/shifty-frontend.git
 [submodule "backend"]
 	url = https://github.com/takuya-ya/shifty-backend.git
 	path = backend
