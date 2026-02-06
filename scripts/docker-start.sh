@@ -1,17 +1,19 @@
 #!/bin/bash
 
+# ターミナルでdsで実行すると、バックエンドとフロントエンドの両方を起動します。
+
 # エラーが起きたら停止
 set -e
 
 # backend 起動
 echo "--- Backend: Starting ---"
 cd backend
-./vendor/bin/sail up -d --remove-orphans
+./vendor/bin/sail up -d --build
 
 # frontend 起動
 echo "--- Frontend: Starting ---"
 cd ../frontend
-docker compose up -d --remove-orphans
+docker compose up -d --build
 
 echo "--- All Done! ---"
 echo "Backend: http://localhost (or your APP_PORT)"
