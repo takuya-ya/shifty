@@ -1,20 +1,19 @@
 #!/bin/bash
-
-# ターミナルでdsで実行すると、バックエンドとフロントエンドの両方を起動します。
-
-# エラーが起きたら停止
 set -e
 
-# backend 起動
-echo "--- Backend: Starting ---"
-cd backend
-./vendor/bin/sail up -d --build
+# 引数に -b が指定された時だけビルドする運用にする
+BUILD_FLAG=""
+if [ "$1" == "-b" ]; then
+  BUILD_FLAG="--build"
+fi
 
-# frontend 起動
-echo "--- Frontend: Starting ---"
-cd ../frontend
-docker compose up -d --build
+echo "--- Starting Services ---"
+
+# バックグラウンドで並列実行させることで待ち時間を短縮
+(cd backend && ./vendor/bin/sail up -d $BUILD_FLAG) &
+(cd frontend && docker compose up -d $BUILD_FLAG) &
+
+# 両方のプロセスが終わるのを待つ
+wait
 
 echo "--- All Done! ---"
-echo "Backend: http://localhost (or your APP_PORT)"
-echo "Frontend: http://localhost:5174"
