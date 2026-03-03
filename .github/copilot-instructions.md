@@ -96,6 +96,16 @@ src/
 
 ## 開発・ビジネスルール
 
+- **プロジェクト構造の自動認識**: コマンドを実行する前に、必ずカレントディレクトリと `backend/`, `frontend/` の構造を確認してください。
+- **Docker/Sailの使用**:
+  - `backend` 配下の `artisan` や `phpunit` などのコマンドは、原則として Docker コンテナ内で実行してください。
+  - 基本的に `docker compose -f backend/compose.yaml exec backend [command]` または `sail` 経由で実行することを優先してください。
+  - 直接ホストマシンで PHP コマンドを実行しないでください。
+- **Dockerの自動起動**:
+  - もし Docker コンテナが起動していない場合は、プロジェクトルートにある `scripts/docker-start.sh` を実行して各サービスを起動してください。
+  - Docker Desktop 自体が起動していないことが推測される場合は、環境に応じたコマンド（例: Linux なら `sudo systemctl start docker` 等）を試みるか、ユーザーに確認してください。
+- **依存関係の確認**: コマンドが失敗した場合は、エラーメッセージから「コンテナが起動していない」「ディレクトリが違う」などの原因を推測し、ユーザーに聞く前にまず自分で `ls` などのツールで状況を確認してください。
+
 ### 1. 認証フロー (Sanctum)
 
 - **認証シーケンス**: ログイン前に `GET /sanctum/csrf-cookie` を呼び出し、次に `POST /api/login` を叩くフローを厳守。
