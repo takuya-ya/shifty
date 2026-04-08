@@ -16,6 +16,7 @@ jobs:
 
       - name: Update submodule to latest
         run: |
+          git submodule update --init ${{ github.event.client_payload.submodule }}
           git submodule update --remote ${{ github.event.client_payload.submodule }}
 
       - name: Commit and push if changed
