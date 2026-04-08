@@ -1,0 +1,28 @@
+name: Update Submodule Pointer
+
+on:
+  repository_dispatch:
+    types: [submodule-updated]
+
+jobs:
+  update-submodule:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout parent repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.PAT_SHIFTY }}
+          submodules: true
+
+      - name: Update submodules to latest
+        run: |
+          git submodule update --remote frontend
+          git submodule update --remote backend
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add frontend backend
+          git diff --staged --quiet || git commit -m "chore: サブプロジェクトのコミットIDを更新"
+          git push origin main
