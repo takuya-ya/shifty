@@ -2,8 +2,11 @@
 
 ## このドキュメントについて
 
-- Claude Code が本リポジトリのコンテキストを理解しやすくするためのガイドです。
-- 新しい機能を実装する際はここで示す技術選定・設計方針・モジュール構成を前提にしてください。
+- Claude Code が本リポジトリのコンテキストを理解するための最上位ガイドです。
+- 言語・フレームワーク別の詳細規約は `.claude/rules/` 配下を参照してください。
+  - `rules/backend.md` — backend/** 作業時に自動ロード
+  - `rules/frontend.md` — frontend/** 作業時に自動ロード
+  - `rules/git-workflow.md` — .github/** 参照時（PR作成時など）に自動ロード
 - 不確かな点がある場合は、リポジトリのファイルを探索し、ユーザーに「こういうことですか?」と確認をするようにしてください。
 
 ## 前提条件
@@ -16,37 +19,20 @@
 
 ## アプリ概要
 
-**Shifty** は、シフト作成作業を効率化し、管理者の負担を軽減するためのWebサービスです。Excelでの管理から脱却し、半月ごとのシフト登録・編集・確定といった運用を一元化します。
+**Shifty**: シフト作成作業を効率化するためのWebサービス（転職活動用ポートフォリオ）。半月ごとのシフト登録・編集・確定を一元管理する。現在は **Phase1 (MVP)**。管理者機能を中心に構築中。
 
-- **主な機能**: シフトCRUD、確定プロセス、人数集計、店休日/営業時間設定、スタッフ管理（Phase2で希望提出機能）。
-- **開発フェーズ**: 現在は **Phase1 (MVP)**。管理者機能を中心に構築中。
+## 開発・ビジネスルール（最重要）
 
-## 技術スタック概要
+- **サブモジュール開発が原則**: `frontend/` と `backend/` はそれぞれ独立した Git サブモジュール（別リポジトリ）として管理されている。実装・ファイル編集・コミットはすべてサブモジュール側（`frontend/` または `backend/`）で行う。親リポジトリ（shifty）はサブモジュールのコミット参照を管理するためだけに存在する。新しいチャットでも、最初からサブモジュールを作業対象として前提とすること。
+- **プロジェクト構造の自動認識**: コマンドを実行する前に、必ずカレントディレクトリと `backend/`, `frontend/` の構造を確認してください。
+- **Docker/Sailの使用**:
+  - `backend` 配下の `artisan` や `phpunit` などのコマンドは、原則として Docker コンテナ内で実行してください。
+  - 基本的に `docker compose -f backend/compose.yaml exec backend [command]` または `sail` 経由で実行することを優先してください。
+  - 直接ホストマシンで PHP コマンドを実行しないでください。
+- **Dockerの自動起動**: Docker コンテナが起動していない場合は `scripts/docker-start.sh` を実行してください。
+- **依存関係の確認**: コマンドが失敗した場合は、エラーメッセージから原因を推測し、ユーザーに聞く前にまず自分でファイル・ディレクトリの状況を確認してください。
 
-### Backend (Laravel)
-
-- **Framework**: Laravel 12 (PHP 8.2/8.5)
-- **Database**: MySQL 8.4 (Docker Sail)
-- **Caching/Queue**: Redis
-- **Auth**: Laravel Sanctum (Cookie-based API 認証)
-- **Code Quality**: PHP Strict Types, PSR-12 (Laravel Pint)
-- **Testing**: PHPUnit (Unit / Feature Tests)
-
-### Frontend (React)
-
-- **Language**: TypeScript (strict mode ON)
-- **Framework**: React 19 / Vite
-- **Router**: React Router
-- **State Management**:
-  - **Server State**: TanStack Query (React Query)
-  - **Global/UI State**: Zustand (必要に応じて)
-  - **Form**: React Hook Form + Zod
-- **Styling**: Tailwind CSS / shadcn/ui + Radix UI
-- **Utilities**: date-fns (日付操作の標準), dnd-kit (ドラッグ&ドロップ操作)
-- **API Client**: fetch API + 独自 wrapper (shared/api)
-- **Testing**: Vitest + React Testing Library (Phase2以降)
-
-## プロジェクト構成と役割
+## プロジェクト構成
 
 ### Backend (backend/app)
 
@@ -77,69 +63,25 @@ src/
 └── assets/             # 静的ファイル
 ```
 
-## アーキテクチャ指針
+## テスト戦略
 
-### バックエンド (CSRパターン)
+- **Phase1**: 主要なServiceロジックのUnitテストと、認証/基本CRUDのFeatureテスト。
+- **Phase2**: CI (GitHub Actions) 導入、フロントエンドの主要ロジックに Vitest を導入。
 
-- **Controller**: 判断しない。リクエストを受取り、Serviceを呼び出し、Resourcesで返却するのみ。3行を超える処理は禁止。
-- **Service**: 「業務の意味」を閉じ込める。
-  - `QueryService`: 参照系（集計、フィルタリング）
-  - `CommandService`: 操作系（作成、更新、削除）
-  - `ConfirmService`: 状態遷移（確定処理）等
-- **Repository**: 「どう取得・保存するか」のみを担当。Serviceからクエリビルダの詳細を隠蔽する。
-
-### フロントエンド
-
-- **Component**: Atomic Designをベースにしつつ、`shared/components/ui` に汎用パーツ、`features/` 内に機能特化したパーツを配置。
-- **State Management**:
-  - APIデータはすべて React Query で管理し、`staleTime` などを利用して最適化。
-  - 複雑なフォームは React Hook Form + Zod で型安全にバリデーション。
-- **Data Flow**: `UI -> Custom Hook -> API Client (fetch wrapper) -> Server`
-
-## 開発・ビジネスルール
-
-- **サブモジュール開発が原則**: `frontend/` と `backend/` はそれぞれ独立した Git サブモジュール（別リポジトリ）として管理されている。実装・ファイル編集・コミットはすべてサブモジュール側（`frontend/` または `backend/`）で行う。親リポジトリ（shifty）はサブモジュールのコミット参照を管理するためだけに存在する。新しいチャットでも、最初からサブモジュールを作業対象として前提とすること。
-- **プロジェクト構造の自動認識**: コマンドを実行する前に、必ずカレントディレクトリと `backend/`, `frontend/` の構造を確認してください。
-- **Docker/Sailの使用**:
-  - `backend` 配下の `artisan` や `phpunit` などのコマンドは、原則として Docker コンテナ内で実行してください。
-  - 基本的に `docker compose -f backend/compose.yaml exec backend [command]` または `sail` 経由で実行することを優先してください。
-  - 直接ホストマシンで PHP コマンドを実行しないでください。
-- **Dockerの自動起動**:
-  - もし Docker コンテナが起動していない場合は、プロジェクトルートにある `scripts/docker-start.sh` を実行して各サービスを起動してください。
-  - Docker Desktop 自体が起動していないことが推測される場合は、環境に応じたコマンド（例: Linux なら `sudo systemctl start docker` 等）を試みるか、ユーザーに確認してください。
-- **依存関係の確認**: コマンドが失敗した場合は、エラーメッセージから「コンテナが起動していない」「ディレクトリが違う」などの原因を推測し、ユーザーに聞く前にまず自分でファイル・ディレクトリの状況を確認してください。
-
-### 1. 認証フロー (Sanctum)
-
-- **認証シーケンス**: ログイン前に `GET /sanctum/csrf-cookie` を呼び出し、次に `POST /api/login` を叩くフローを厳守。
-- **認証状況判定**: ユーザー情報取得APIが成功するかどうかでログイン状態を判定。
-
-### 2. シフトドメインの仕様
+## シフトドメインの仕様
 
 - **期間概念**: 半月単位（1〜15日、16日〜末日）での管理。
 - **状態遷移**: `draft` (下書き) → `confirmed` (確定)。
 - **編集ロック**: `confirmed` 状態のシフトは原則として編集不可（PolicyやRequestで制限）。
 - **ガント表示**: スタッフ × 日付のグリッド表示。日付の範囲計算には `date-fns` を使用。
 
-## ディレクトリ・ファイル命名規則
+## ベストプラクティス（コード品質・全言語共通）
 
-- **Backend (PHP)**: PSR-4 準拠。`ShiftService.php`, `ShiftRepository.php` (PascalCase)。
-- **Frontend (React)**:
-  - Component: `ShiftTable.tsx` (PascalCase) / ディレクトリは `shift-table/` (kebab-case)
-  - Hook: `useShifts.ts` (camelCase + use prefix)
-  - Utils: `formatDate.ts` (camelCase)
-
-## テスト戦略
-
-- **Phase1**: 「テスト可能な設計（CSR）」を優先。主要なServiceロジックのUnitテストと、認証/基本CRUDのFeatureテスト。
-- **Phase2**: CI (GitHub Actions) 導入、Featureテストの拡充、フロントエンドの主要ロジックに Vitest を導入。
-
-## アンチパターン
-
-- **Controller内の肥大化**: ビジネスロジックを直接書かない。
-- **Service内でのEloquent型依存**: `where`句などの詳細クエリをServiceに書かず、Repositoryに任せる。
-- **useEffectの濫用**: データフェッチは React Query、イベントハンドラで済む処理に `useEffect` は使わない。
-- **anyの禁止**: TypeScript では可能な限り型を定義する。
+- **命名は省略しない**: `usr`, `dt`, `cb` などの省略形禁止。意図が伝わる名前を付ける。
+- **マジックナンバー禁止**: 意味のある数値・文字列は定数や enum で定義する。
+- **関数・メソッドの責務は1つ**: 20行を超える場合は分割を検討する。
+- **DRY の適用基準**: 同じロジックが3箇所以上出現したら抽象化を検討する。2箇所では早い。
+- **コメントは「なぜ」のみ**: コードを読めばわかる「何を」の説明コメントは書かない。
 
 ## 実装前の必読ドキュメント
 
@@ -153,34 +95,20 @@ src/
 
 フロントエンドのデザインを検討・実装するときは、**必ず** 以下を参照すること。
 
-- [figma 参照マップ](../docs/figma-reference-map.md) — タスク番号ごとに参照すべき figma ファイルをまとめたマップ
 - デザインファイル本体: `figma-file/app/components/`
+
+### Figma 参照の原則（厳守）
+
+**Figma はあくまで「視覚的デザイン」の参照用途のみ。** 以下を必ず守ること。
+
+- **参照してよいもの**: 色・余白・サイズ・タイポグラフィ・アイコン種別・レイアウト上の配置（幅・高さ・間隔）
+- **参照してはいけないもの**: コンポーネント分割・props 設計・状態管理・データフロー・ファイル構成など
+- **「Figma にそう書いてある」はアーキテクチャ判断の根拠にならない。判断基準はプロジェクト全体として合理的かどうかを最優先とする**
+- Figma のコード出力・コンポーネント構造をそのままプロジェクトに適用することは禁止
+- 既存実装を書き換える場合、「視覚的変更」か「アーキテクチャ変更」かを明確に区別し、アーキテクチャ変更はユーザーに確認を取ること
 
 ## Claude Code への追加指示
 
 - コマンドを提案する際は、必ず以下の2点を明記してください。
   1. 目的：そのコマンドを実行する理由
   2. 具体的な処理内容：そのコマンドによって生じる具体的な変化
-- コミットメッセージは必ず日本語で生成すること。
-- 変更を行った場合は、提案するコミットメッセージをチャット欄にも必ず出力すること。
-- コミットメッセージは以下の形式で出力すること。
-  ```
-  接頭辞: 本文
-  - 理由の詳細（体言止め）
-  ```
-  （例）
-  ```
-  refactor: 未使用依存の除去とCSSテーマ変数をデフォルト命名に統一
-  
-  - 未使用依存の削除とshadcn/ui標準への統一
-  ```
-- PR のタイトルは以下の形式で出力すること。
-  ```
-  接頭辞: [タスク番号] タイトル本文
-  ```
-  - 接頭辞は変更内容に応じて `feat` / `fix` / `refactor` / `chore` / `docs` などから選択すること。
-  - タスク番号はユーザーが明示した番号（例: `13.4`）を `[]` で囲む。番号が不明な場合はユーザーに確認すること。
-  - （例）`feat: [13.4] 管理者登録フォームを React Hook Form + Zod に移行`
-- PR の description は以下のテンプレートに従って出力すること。
-  - [.github/pull_request_template.md](../.github/pull_request_template.md)
-- PR の description に「🤖 Generated with Claude Code」などの帰属フッターは追加しないこと。
