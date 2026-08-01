@@ -65,8 +65,8 @@ src/
 
 ## テスト戦略
 
-- **Phase1**: 主要なServiceロジックのUnitテストと、認証/基本CRUDのFeatureテスト。
-- **Phase2**: CI (GitHub Actions) 導入、フロントエンドの主要ロジックに Vitest を導入。
+- **Phase1**: バックエンド・フロントエンド共通で、業務ロジックを持つコードのUnitテスト。認証/基本CRUDのFeatureテスト。テスト対象の判断基準は `/tdd` スキルに従う。
+- **Phase2**: CI (GitHub Actions) 導入、フロントエンドのコンポーネントテスト（React Testing Library）。
 
 ## シフトドメインの仕様
 

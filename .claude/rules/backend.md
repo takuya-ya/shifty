@@ -26,6 +26,7 @@ paths:
 ## ディレクトリ・ファイル命名規則
 
 - PSR-4 準拠。`ShiftService.php`, `ShiftRepository.php` (PascalCase)
+- **FormRequest は `{動詞}{リソース名}Request` の順**: `StoreShiftRequest`, `IndexShiftRequest`, `UpdateShiftRequest` のように操作名を先頭に置く（Laravel の artisan 慣習・リソースアクション名 `index`/`store`/`update`/`destroy` に合わせる）。`{リソース名}{動詞}Request` の順は使わない。
 
 ## ベストプラクティス
 
