@@ -1,6 +1,7 @@
 {
   "tailwindCSS.files.exclude": ["**/backend/vendor/**"],
   "search.useIgnoreFiles": false,
+  "search.collapseResults": "auto",
   "search.exclude": {
     "**/node_modules": true,
     "**/.git": true,
