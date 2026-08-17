@@ -12,7 +12,8 @@
       "Bash(python3 -m json.tool)",
       "Bash(curl -s http://localhost:5175/)",
       "Bash(claude -p \"shifty-frontend の PR #39 の差分をレビューして、問題点と改善提案を GitHub PR コメントに投稿して\")",
-      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(d.get\\('url','error'\\)\\)\")"
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(d.get\\('url','error'\\)\\)\")",
+      "Bash(claude -p \"このPRの差分をレビューして、問題点と改善提案をPRコメントに投稿して。PR番号: 33\" --model sonnet)"
     ]
   }
 }
