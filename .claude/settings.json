@@ -2,9 +2,14 @@
   "permissions": {
     "allow": [
       "Bash(python3 -c ' *)",
-      "Bash(git -C /home/takuya-ya/Documents/code/shifty/backend diff lang/ja/validation.php)",
-      "Bash(git -C /home/takuya-ya/Documents/code/shifty/backend checkout main)",
-      "Bash(git -C /home/takuya-ya/Documents/code/shifty/backend pull origin main)",
+      "Bash(cd * && git *)",
+      "Bash(git -C * status *)",
+      "Bash(git -C * diff *)",
+      "Bash(git -C * log *)",
+      "Bash(git -C * show *)",
+      "Bash(git -C * branch *)",
+      "Bash(git -C * checkout *)",
+      "Bash(git -C * pull *)",
       "Bash(npx vitest *)",
       "Bash(xargs cat)",
       "Bash(npx playwright *)",
