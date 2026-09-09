@@ -29,7 +29,14 @@
       "Bash(git log *)",
       "Bash(git ls-files *)",
       "Bash(git branch *)",
-      "Bash(git switch *)"
+      "Bash(git switch *)",
+      "Bash(git -C backend log --oneline -20 --format=\"%h %ad %s\" --date=short)",
+      "Bash(docker compose -f * ps *)",
+      "Bash(gh api repos/*/pulls/*/comments *)",
+      "Bash(gh api repos/*/pulls/*/reviews *)",
+      "Bash(gh api repos/*/issues/*/comments *)",
+      "Bash(npx tsc --noEmit *)",
+      "Bash(echo *)"
     ]
   }
 }
