@@ -3,6 +3,7 @@
     "allow": [
       "Bash(python3 -c ' *)",
       "Bash(cd * && git *)",
+      "Bash(cd * && git branch --show-current)",
       "Bash(git -C * status *)",
       "Bash(git -C * diff *)",
       "Bash(git -C * log *)",
@@ -36,7 +37,8 @@
       "Bash(gh api repos/*/pulls/*/reviews *)",
       "Bash(gh api repos/*/issues/*/comments *)",
       "Bash(npx tsc --noEmit *)",
-      "Bash(echo *)"
+      "Bash(echo *)",
+      "Bash(cd * && git status && echo * && git log *)"
     ]
   }
 }
