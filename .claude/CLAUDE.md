@@ -30,6 +30,7 @@
   - `backend` 配下の `artisan` や `phpunit` などのコマンドは、原則として Docker コンテナ内で実行してください。
   - 基本的に `docker compose -f backend/compose.yaml exec backend [command]` または `sail` 経由で実行することを優先してください。
   - 直接ホストマシンで PHP コマンドを実行しないでください。
+  - `frontend` 配下の `vitest` / `tsc` / `npm run build` などの検証コマンドも同様に、原則として Docker コンテナ内で実行してください（`docker compose -f frontend/compose.yaml exec frontend [command]`）。理由: `compose.yaml` で `node_modules` が匿名ボリュームとしてホストと分離されており、かつホストとコンテナで Node.js のバージョンも異なるため、ホストでの検証結果がコンテナ（実際にユーザーがアクセスする実行環境）の挙動と一致する保証がない。
 - **Dockerの自動起動**: Docker コンテナが起動していない場合は `scripts/docker-start.sh` を実行してください。
 - **依存関係の確認**: コマンドが失敗した場合は、エラーメッセージから原因を推測し、ユーザーに聞く前にまず自分でファイル・ディレクトリの状況を確認してください。
 
