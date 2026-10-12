@@ -33,6 +33,15 @@ paths:
 - Hook: `useShifts.ts` (camelCase + use prefix)
 - Utils: `formatDate.ts` (camelCase)
 
+### import パス
+
+- **`src/` 直下のディレクトリを単位とし、単位をまたぐ import は `@/` エイリアスを使用する。**
+  - `features` は `features/<名前>` ごとに1つの単位とする
+  - 例: `import { get } from '@/shared/api/client'`（○）
+  - 例: `import { get } from '../../../shared/api/client'`（×）
+- **同じ単位の中の import は相対パス `../` を使用してよい。**
+  - 例: `import type { Shift } from '../types'`（○）
+
 ## ベストプラクティス
 
 - **`any` 禁止**: Discriminated Union / Generics / `unknown` + 型ガードで対応する。
