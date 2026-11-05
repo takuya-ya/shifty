@@ -17,7 +17,7 @@ paths:
 - **Styling**: Tailwind CSS / shadcn/ui + Radix UI
 - **Utilities**: date-fns (日付操作の標準), dnd-kit (ドラッグ&ドロップ操作)
 - **API Client**: fetch API + 独自 wrapper (shared/api)
-- **Testing**: Vitest + React Testing Library (Phase2以降)
+- **Testing**: Vitest + React Testing Library
 
 ## アーキテクチャ指針
 
