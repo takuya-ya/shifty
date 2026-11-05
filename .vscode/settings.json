@@ -8,6 +8,8 @@
     "**/figma": true,
     "**/share_chat": true,
     "**/figma-file": true,
-    "**/vendor": true
+    "**/vendor": true,
+    "**/docs/shared-context": true,
+    "**/docs/knowledge": true
   }
 }
