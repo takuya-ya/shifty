@@ -93,6 +93,7 @@ src/
 - [主要テーブル定義草案.md](../docs/Step1_準備/Step1-3_構造設計/主要テーブル定義草案.md)
 - [難易度の高いタスク確認と実装方法.md](../docs/Step1_準備/Step1-1_機能要件定義/難易度の高いタスク確認と実装方法.md)
 - [テスト戦略（改訂版）.md](../docs/Step1_準備/Step1-4_非機能要件・品質設計/テスト戦略（改訂版）.md)
+- 設計方針は [docs/knowledge/](../docs/knowledge/)、技術選定の理由は [docs/decisions/](../docs/decisions/) にある。関係する作業の前にファイル一覧を見て、該当するものを開くこと（例: null の扱い → `knowledge/null-handling.md`）
 
 ## フロントエンド UI デザイン参照
 
